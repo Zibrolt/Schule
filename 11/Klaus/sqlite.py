@@ -28,7 +28,8 @@ connection.commit()
 sql =   "SELECT *" \
         "FROM kunde"
 result = cursor.execute(sql)
+
+
 for row in result:
     print([val for val in row])
-
 connection.close()
