@@ -1,4 +1,5 @@
 import time
+import random
 
 def aufgabe1():
     print("Zugangskontrolle")
@@ -9,6 +10,10 @@ def aufgabe1():
         print("Bitte einfahren\n")
         time.sleep(0.5)
         print("\n - Signal Zugangskontrolle -")
+        if random.random() < 0.5:
+            i += 1
+            print(f"Auto ausgefahren")
+            print(f"Noch {i} Parkplaetze verwendet")
     
     print("Kein freier Platz mehr verfuegbar")
     
