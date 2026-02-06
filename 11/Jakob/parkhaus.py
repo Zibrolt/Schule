@@ -1,5 +1,5 @@
 import time
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 class Zustand:
 
@@ -49,6 +49,17 @@ class ZustandZuNiedrig(Zustand):
     def exit(self): 
         print("Heizung ausgeschaltet")
 
+class ZustandFehler(Zustand):
+
+    def entry(self):
+        print("FEHLER in der Temperatur")
+    
+    def do(self):
+        raise Exception("Ungueltige Temperatur")
+    
+    def exit(self):
+        return super().exit()
+    
 # Hauptklasse für die Regelung
 class Raumluftregelung:
     def __init__(self, soll_temp): # 'soll_temp' ist der Parameter
@@ -64,7 +75,11 @@ class Raumluftregelung:
     def starteRegelung(self):
         while True:
             self.pruefeTemperatur()
-            self.istTemperatur += self.aktuellerZustand.do()
+            try:
+                self.istTemperatur += self.aktuellerZustand.do()
+            except Exception as e:
+                print(e)
+                break
             self.istTemperatur = round(self.istTemperatur, 2)
             print(f"IST: {self.istTemperatur} || SOLL: {self.sollTemperatur}")
             time.sleep(0.2)
@@ -73,14 +88,19 @@ class Raumluftregelung:
         return float(input("Geben Sie die Temperatur ein: "))
 
     def pruefeTemperatur(self):
-        if self.istTemperatur > self.sollTemperatur:
+
+        if self.istTemperatur > 40 or self.istTemperatur < 0:
+            self.wechselZustand(ZustandFehler())
+
+        elif self.istTemperatur > self.sollTemperatur:
             self.wechselZustand(ZustandZuHoch())
         
-        if self.istTemperatur < self.sollTemperatur:
+        elif self.istTemperatur < self.sollTemperatur:
             self.wechselZustand(ZustandZuNiedrig())
 
-        if self.istTemperatur == self.sollTemperatur:
+        elif self.istTemperatur == self.sollTemperatur:
             self.wechselZustand(ZustandIO())
+
 
 regelung=Raumluftregelung(soll_temp=22.0) # '22.0' ist das Argument
 regelung.starteRegelung()
