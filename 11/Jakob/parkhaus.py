@@ -1,7 +1,7 @@
 import time
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
-class Zustand:
+class Zustand(ABC):
 
     @abstractmethod
     def entry(self):
